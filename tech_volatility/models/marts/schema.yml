@@ -1,0 +1,26 @@
+version: 2
+
+models:
+  - name: mart_volatility_analysis
+    description: "Final table for volatility analysis. Aggregates metrics and flags high volatility days."
+    columns:
+      - name: stock_date
+        tests:
+          - not_null
+      
+      - name: ticker
+        tests:
+          - not_null
+      
+      # Test that the combination of date + ticker is unique (Primary Key test)
+      - name: stock_date
+        tests:
+          - unique:
+              column_name: "(ticker || '-' || stock_date)"
+
+      - name: is_high_volatility
+        description: "Boolean flag indicating if the daily return exceeded 3%."
+        tests:
+          - accepted_values:
+              arguments:
+                values: [true, false]

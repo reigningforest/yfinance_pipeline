@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: int_stock_metrics
+    description: "Calculates volatility metrics like daily returns and moving averages."
+    columns:
+      - name: stock_date
+        tests:
+          - not_null
+      
+      - name: ticker
+        tests:
+          - not_null
+
+      - name: daily_return_pct
+        description: "Percentage change from the previous day's close."
+        tests:
+          - not_null:
+              # It's okay if the first day is null (no previous day), so we might warn instead of fail
+              config:
+                severity: warn

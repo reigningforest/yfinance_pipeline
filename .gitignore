@@ -1,4 +1,14 @@
+pycache/
+*.py[cod]
 .venv/
+venv/
+
+.DS_Store
 
 *.csv
 
+.streamlit/secrets.toml
+
+target/
+dbt_packages/
+logs/

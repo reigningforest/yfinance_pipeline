@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: fivetran_data
+    # This must match the Database you created in Snowflake
+    database: FIVETRAN_DATABASE
+    # This must match the Schema Fivetran created
+    schema: FINAL_PROJECT_CHIPMUNK
+    tables:
+      - name: tech_stocks_raw

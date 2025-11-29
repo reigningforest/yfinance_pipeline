@@ -1,0 +1,20 @@
+version: 2
+
+models:
+  - name: stg_tech_stocks
+    description: "Cleaned raw stock data from Snowflake/Fivetran. Renames columns and casts types."
+    columns:
+      - name: stock_date
+        description: "The trading date."
+        tests:
+          - not_null
+      
+      - name: ticker
+        description: "Stock ticker symbol (e.g., AAPL)."
+        tests:
+          - not_null
+      
+      - name: close_price
+        description: "The closing price of the stock for the day."
+        tests:
+          - not_null
