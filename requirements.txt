@@ -6,3 +6,4 @@ streamlit
 plotly
 snowflake-connector-python
 pyarrow
+cryptography

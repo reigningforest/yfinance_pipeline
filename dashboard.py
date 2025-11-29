@@ -50,7 +50,7 @@ def init_connection():
         st.error(f"Missing configuration in secrets.toml: {e}")
         st.stop()
     except FileNotFoundError:
-        st.error(f"Could not find private key file at: {key_path}")
+        st.error(f"Could not find private key file at: {key_path}") # type: ignore
         st.stop()
     except Exception as e:
         st.error(f"Error initializing connection: {e}")

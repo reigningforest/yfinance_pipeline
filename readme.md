@@ -12,6 +12,10 @@ This project is an end-to-end data pipeline and dashboard designed to track and 
    - **Staging**: Cleans and deduplicates raw data.
    - **Intermediate**: Calculates daily returns and moving averages.
    - **Marts**: Aggregates volatility metrics for analysis.
+   - **Tests**: Run tests (`dbt test`) to ensure:
+     - **Uniqueness**: No duplicate records for Ticker + Date.
+     - **Completeness**: No null values in critical columns (Price, Date, Ticker).
+     - **Validity**: Boolean flags contain only valid values.
 
 4. **Visualization**: `dashboard.py` is a **Streamlit** application that connects to Snowflake to visualize the processed data, allowing users to explore stock volatility trends.
 
@@ -106,8 +110,8 @@ cd tech_volatility
 dbt debug  # Verify connection
 dbt run    # Run transformations
 dbt test   # Run data quality tests
-dbt docs generate
-dbt docs serve
+dbt docs generate # Generate documentation
+dbt docs serve # View documentation
 ```
 
 ### Step 4: Run Dashboard

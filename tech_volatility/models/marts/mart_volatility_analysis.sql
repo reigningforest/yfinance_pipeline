@@ -3,6 +3,9 @@ with stock_metrics as (
 )
 
 select
+    -- Create a surrogate key (unique ID) for testing
+    (ticker || '-' || to_char(stock_date, 'YYYY-MM-DD')) as vol_id,
+    
     stock_date,
     ticker,
     close_price,
@@ -10,7 +13,6 @@ select
     moving_avg_7d,
     volume,
     
-    -- Flag High Volatility Days (e.g., return > 3% or < -3%)
     case 
         when abs(daily_return_pct) > 0.03 then true 
         else false 

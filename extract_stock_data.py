@@ -3,10 +3,9 @@ import pandas as pd
 from datetime import datetime, timedelta
 
 def fetch_stock_data():
-    # 1. Define the Magnificent Seven tickers
     tickers = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'NVDA', 'META', 'TSLA']
     
-    # 2. Define the date range (Last 90 days)
+    # Define Date Range
     end_date = datetime.today().strftime('%Y-%m-%d')
     start_date = (datetime.today() - timedelta(days=90)).strftime('%Y-%m-%d')
     
@@ -14,42 +13,50 @@ def fetch_stock_data():
 
     all_data = []
 
-    # 3. Loop through tickers and fetch data
     for ticker in tickers:
         try:
-            print(f"Downloading {ticker}...")
-            # download data using yfinance
+            print(f"Downloading {ticker}...", end=" ")
             data = yf.download(ticker, start=start_date, end=end_date, progress=False)
             
-            # Reset index to make 'Date' a column and not the index
+            if data.empty:
+                print("No data found.")
+                continue
+
+            # FIX: Flatten columns immediately if they are MultiIndex
+            # (Recent yfinance updates sometimes return columns like ('Close', 'AAPL'))
+            if isinstance(data.columns, pd.MultiIndex):
+                data.columns = data.columns.get_level_values(0)
+
+            # Reset index to ensure Date is a normal column
             data.reset_index(inplace=True)
-            
-            # Add a column for the Ticker symbol so we can distinguish them later
+
+            # Force column names to be clean string types
+            data.columns = [str(c) for c in data.columns]
+
+            # Add Ticker column
             data['Ticker'] = ticker
             
             # Append to list
             all_data.append(data)
+            print(f"Success! ({len(data)} rows)")
             
         except Exception as e:
-            print(f"Error fetching {ticker}: {e}")
+            print(f"Error: {e}")
 
-    # 4. Combine all data into a single DataFrame
+    # Combine and Save
     if all_data:
-        final_df = pd.concat(all_data)
+        final_df = pd.concat(all_data, ignore_index=True)
         
-        # 5. Clean up columns (Flatten MultiIndex if necessary and standardize names)
-        # yfinance sometimes returns multi-level columns. This ensures they are flat.
-        if isinstance(final_df.columns, pd.MultiIndex):
-            final_df.columns = final_df.columns.get_level_values(0)
-            
-        # Rename columns to be database-friendly (no spaces, lowercase)
+        # Final cleanup of column names
         final_df.columns = [c.lower().replace(' ', '_') for c in final_df.columns]
 
-        # 6. Save to CSV
         output_filename = 'tech_stocks_raw.csv'
         final_df.to_csv(output_filename, index=False)
-        print(f"Success! Data saved to {output_filename}")
-        print(final_df.head()) # Show a preview
+        
+        print("-" * 30)
+        print(f"DONE. Total rows collected: {len(final_df)}")
+        print(f"Tickers found: {final_df['ticker'].unique()}")
+        print(f"Saved to {output_filename}")
     else:
         print("No data fetched.")
 
